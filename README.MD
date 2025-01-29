@@ -11,7 +11,7 @@ This Visual Studio Code extension provides context menu options to read files fr
 ## 🛠️ Installation
 ### From the Marketplace
 1. Open the Extensions view by pressing `Ctrl+Shift+X`.
-2. Search for `File Reader` in the Extensions view search box.
+2. Search for `File Reader` in the Extensions view search box or click [here](https://marketplace.visualstudio.com/items?itemName=ntkhang03.file-reader).
 3. Click on the Install button.
 4. Reload the window to enable the extension.
 
