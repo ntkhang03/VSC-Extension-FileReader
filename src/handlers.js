@@ -130,6 +130,10 @@ async function handleReadFiles(uri, uris = null) {
 }
 
 async function handleReadMultipleFiles(_, uris) {
+  if (uris.length === 0) {
+    uris = [_];
+  }
+
   await handleReadFiles(null, uris);
 }
 
