@@ -1,0 +1,101 @@
+{
+	"name": "file-reader",
+	"publisher": "ntkhang03",
+	"displayName": "File Reader",
+	"description": "Provides context menu options to read files from folders or selected files.",
+	"version": "1.0.0",
+	"engines": {
+		"vscode": "^1.78.0"
+	},
+	"scripts": {
+		"package": "vsce package"
+	},
+	"activationEvents": [
+		"onCommand:fileReader.readFilesInFolder",
+		"onCommand:fileReader.readSelectedFiles",
+		"onCommand:fileReader.openFilterSettings"
+	],
+	"icon": "images/icon.png",
+	"categories": [
+		"Other"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ntkhang03/file-reader-extension.git"
+	},
+	"keywords": [
+		"file-reader",
+		"file-reader"
+	],
+	"main": "./src/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "fileReader.readFilesInFolder",
+				"title": "Read files in this folder",
+				"category": "File Operations"
+			},
+			{
+				"command": "fileReader.readSelectedFiles",
+				"title": "Read selected files",
+				"category": "File Operations"
+			},
+			{
+				"command": "fileReader.openFilterSettings",
+				"title": "Open Read File Filters Settings"
+			}
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "fileReader.readFilesInFolder",
+					"when": "explorerResourceIsFolder",
+					"group": "0-file-reader@2"
+				},
+				{
+					"command": "fileReader.readSelectedFiles",
+					"when": "!explorerResourceIsFolder || explorerResourceMultipleSelections",
+					"group": "0-file-reader@2"
+				}
+			]
+		},
+		"configuration": {
+			"type": "object",
+			"title": "Read Files Filters",
+			"properties": {
+				"fileReader.filters": {
+					"type": "array",
+					"description": "Define filters to include or ignore files.",
+					"default": [],
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string",
+								"description": "Filter name."
+							},
+							"include": {
+								"type": "array",
+								"description": "Glob patterns to include.",
+								"items": {
+									"type": "string"
+								}
+							},
+							"exclude": {
+								"type": "array",
+								"description": "Glob patterns to exclude.",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"dependencies": {
+		"micromatch": "^4.0.8",
+		"mime-types": "^2.1.35"
+	}
+}
