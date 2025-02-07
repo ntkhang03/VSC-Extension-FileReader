@@ -7,7 +7,8 @@ const {
   readFileContent,
   createFileTree,
   createTreeStructureString,
-  isTextFile
+  isTextFile,
+  removeCommonPath
 } = require("./utils");
 const { getFilters } = require("./settings");
 
@@ -38,8 +39,6 @@ async function handleReadFiles(uri, uris = null) {
     if (!uris) {
       uris = [uri];
     }
-
-    console.log(uris);
 
     const filters = getFilters();
     const selectedFilter = await vscode.window.showQuickPick(
@@ -109,14 +108,51 @@ async function handleReadFiles(uri, uris = null) {
       });
 
       arr.push(
-        `================================================\n` +
-          `File: ${filePath}\n` +
-          `================================================\n` +
-          `${readFileContent(filePath)}\n`
+        // `================================================\n` +
+        //   `File: ${filePath}\n` +
+        //   `================================================\n` +
+        //   `${readFileContent(filePath)}\n`
+        {
+          filePath: filePath,
+          content: readFileContent(filePath)
+        }
       );
     }
 
-    const output = arr.join("\n");
+    // remove common path
+    const filePathsWithoutCommonPath = [];
+    if (!filter.removeCommonPath) {
+      filePathsWithoutCommonPath.push(...arr);
+    } else {
+      const paths = arr.map((item) => item.filePath);
+      const commonPath = removeCommonPath(paths);
+      filePathsWithoutCommonPath.push(
+        ...arr.map((item, index) => {
+          return {
+            filePath: commonPath[index],
+            content: item.content
+          };
+        })
+      );
+      console.log(filePathsWithoutCommonPath);
+    }
+
+    const defaultOutputTemplate =
+      `================================================\n` +
+      `File: {{filePath}}\n` +
+      `================================================\n` +
+      `{{content}}\n`;
+    const output = filePathsWithoutCommonPath
+      .map((item) => {
+        return (filter.outputTemplate || defaultOutputTemplate)
+          .replace("{{filePath}}", item.filePath)
+          .replace("{{content}}", item.content);
+      })
+      .join("\n");
+
+    if (filter.removeCommonPath) {
+      filePaths = removeCommonPath(filePaths);
+    }
     const treeFolder = createFileTree(filePaths);
 
     vscode.workspace

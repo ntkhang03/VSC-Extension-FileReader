@@ -1,4 +1,5 @@
 # 📂 File Reader Extension
+
 This Visual Studio Code extension provides context menu options to read files from folders or selected files.
 
 ## 🚀 Features
@@ -9,13 +10,16 @@ This Visual Studio Code extension provides context menu options to read files fr
 - View the directory structure in a tree format.
 
 ## 🛠️ Installation
+
 ### From the Marketplace
+
 1. Open the Extensions view by pressing `Ctrl+Shift+X`.
 2. Search for `File Reader` in the Extensions view search box or click [here](https://marketplace.visualstudio.com/items?itemName=ntkhang03.file-reader).
 3. Click on the Install button.
 4. Reload the window to enable the extension.
 
 ### From a VSIX file
+
 1. Clone the repository:
    ```sh
    git clone https://github.com/ntkhang03/file-reader-extension.git
@@ -29,15 +33,13 @@ This Visual Studio Code extension provides context menu options to read files fr
    npm install
    ```
 4. Package the extension:
-	 ```sh
-	 npm run package
-	 ```
-5.  Install the extension:
-	 - Open the Extensions view by pressing `Ctrl+Shift+X`.
-	 - Click on the `...` icon and choose `Install from VSIX...`.
-	 - Select the generated `.vsix` file in the `out` directory.
-
-
+   ```sh
+   npm run package
+   ```
+5. Install the extension:
+   - Open the Extensions view by pressing `Ctrl+Shift+X`.
+   - Click on the `...` icon and choose `Install from VSIX...`.
+   - Select the generated `.vsix` file in the `out` directory.
 
 ## 📋 Usage
 
@@ -54,8 +56,10 @@ You can define filters to include or exclude specific files. Add the following c
 "fileReader.filters": [
   {
     "name": "Example Filter",
-    "include": ["**/*.js"],
-    "exclude": ["**/node_modules/**"]
+    "include": ["**/*.js"], // optional - filter to include files
+    "exclude": ["**/node_modules/**"], // optional - filter to exclude files
+    "removeCommonPath": true, // optional - remove common path from file path
+    "outputTemplate": "=====\n{{filePath}}\n=====\n{{content}}\n" // optional - custom output template for each file
   }
 ]
 ```

@@ -3,7 +3,7 @@
 	"publisher": "ntkhang03",
 	"displayName": "File Reader",
 	"description": "Provides context menu options to read files from folders or selected files.",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"engines": {
 		"vscode": "^1.78.0"
 	},
@@ -84,6 +84,20 @@
 							"exclude": {
 								"type": "array",
 								"description": "Glob patterns to exclude.",
+								"items": {
+									"type": "string"
+								}
+							},
+							"removeCommonPath": {
+								"type": "boolean",
+								"description": "Remove common path from file path.",
+								"items": {
+									"type": "boolean"
+								}
+							},
+							"outputTemplate": {
+								"type": "string",
+								"description": "Output template for file path.",
 								"items": {
 									"type": "string"
 								}

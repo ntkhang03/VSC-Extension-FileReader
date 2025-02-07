@@ -3,20 +3,20 @@ const micromatch = require("micromatch");
 const mime = require("mime-types");
 
 /**
- * Lọc danh sách file path theo các glob patterns hoặc tên file cụ thể (include, exclude).
+ * Filter the list of file paths based on glob patterns or specific file names (include, exclude).
  *
- * @param {string[]} filePaths - Mảng các file path cần kiểm tra.
- * @param {Object} filters - Object chứa các patterns: { include: [], exclude: [] }.
- * @param {string[]} filters.include - Danh sách glob patterns hoặc tên file cụ thể cần bao gồm.
- * @param {string[]} filters.exclude - Danh sách glob patterns hoặc tên file cụ thể cần loại trừ.
- * @returns {string[]} - Danh sách các file hợp lệ.
+ * @param {string[]} filePaths - Array of file paths to be filtered.
+ * @param {Object} filters - Object containing patterns: { include: [], exclude: [] }.
+ * @param {string[]} filters.include - Array of glob patterns or specific file names to be included.
+ * @param {string[]} filters.exclude - Array of glob patterns or specific file names to be excluded.
+ * @returns {string[]} - Array of valid files.
  */
 function filterFiles(filePaths, filters) {
   const { include = [], exclude = [] } = filters;
 
   // use micromatch
   return filePaths.filter((filePath) => {
-    // Kiểm tra nếu filePath khớp include (nếu có)
+    // Check if the filePath matches include (if any)
     const isIncluded =
       include.length === 0 ||
       include.some(
@@ -24,13 +24,13 @@ function filterFiles(filePaths, filters) {
           micromatch(filePath, pattern).length || filePath.endsWith(pattern)
       );
 
-    // Kiểm tra nếu filePath khớp exclude
+    // Check if the filePath matches exclude (if any)
     const isExcluded = exclude.some(
       (pattern) =>
         micromatch(filePath, pattern).length || filePath.endsWith(pattern)
     );
 
-    // Chỉ giữ filePath nếu nó được include và không bị exclude
+    // Check if the filePath should be included and not excluded
     return isIncluded && !isExcluded;
   });
 }
@@ -41,6 +41,25 @@ function readFileContent(filePath) {
   } catch (error) {
     return `Error reading file: ${error.message}`;
   }
+}
+
+function removeCommonPath(paths) {
+  const commonPath = paths.reduce((acc, path) => {
+    const parts = path.split(/[\\/]/);
+    if (!acc) {
+      return parts;
+    }
+
+    return acc.filter((part, index) => part === parts[index]);
+  }, null);
+
+  return paths.map((path) => {
+    const parts = path.split(/[\\/]/);
+    // Giữ lại phần cuối cùng của thư mục chung
+    const commonLength = commonPath.length;
+    const remainingParts = parts.slice(commonLength - 1); // Chỉ lấy phần sau thư mục chung cuối cùng
+    return remainingParts.join("/");
+  });
 }
 
 /**
@@ -103,24 +122,25 @@ function createFileTree(paths) {
   const root = { name: "", type: "directory", children: [] };
 
   paths.forEach((path) => {
-    const parts = path.split("\\"); // Tách đường dẫn thành các phần
+    // split by \ or /
+    const parts = path.split(/[\\/]/);
     let currentNode = root;
 
     parts.forEach((part, index) => {
-      // Kiểm tra xem node này đã tồn tại chưa
+      // Check if the node already exists
       let child = currentNode.children.find((child) => child.name === part);
 
-      // Nếu node chưa tồn tại, tạo mới
+      // If the node does not exist, create a new one
       if (!child) {
         child = {
           name: part,
-          type: index === parts.length - 1 ? "file" : "directory", // Nếu là phần cuối, là file
+          type: index === parts.length - 1 ? "file" : "directory", // If it is the last part, it is a file
           children: []
         };
         currentNode.children.push(child);
       }
 
-      // Chuyển đến node con để tiếp tục xây dựng cây
+      // Move to the child node to continue building the tree
       currentNode = child;
     });
   });
@@ -139,6 +159,7 @@ function isTextFile(filePath) {
 
 module.exports = {
   filterFiles,
+  removeCommonPath,
   readFileContent,
   createTreeStructure,
   createTreeStructureString,
