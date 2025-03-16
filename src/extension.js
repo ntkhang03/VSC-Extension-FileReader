@@ -1,69 +1,91 @@
 const vscode = require("vscode");
+const fs = require("fs");
 const { handleReadMultipleFiles } = require("./handlers");
-const { getFilters } = require("./settings");
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+  const diagnosticCollection =
+    vscode.languages.createDiagnosticCollection("fileReader");
+  context.subscriptions.push(diagnosticCollection);
+
+  vscode.commands.executeCommand("setContext", "fileReader.selectionCount", 2);
+
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "fileReader.readFilesInFolder",
-      handleReadMultipleFiles
-    ),
     vscode.commands.registerCommand(
       "fileReader.readSelectedFiles",
       handleReadMultipleFiles
     ),
-    vscode.workspace.onDidChangeConfiguration(() => {
-      // Loops through the filters
-      // Check:
-      // + if there is removeCommonPath but the value is not a boolean
-      // + if there is outputTemplate but the value is not a string, or does not have {{filePath}} and {{content}}
-
-      const filters = getFilters(true); // Refresh filters cache
-      for (const filter of filters) {
-        // check name required and unique
-        if (!filter.hasOwnProperty("name")) {
-          vscode.window.showErrorMessage(
-            `Filter name is required for all filters`
-          );
-          break;
+    vscode.commands.registerCommand(
+      "fileReader.readFilesFromTextSelection",
+      async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+          return;
         }
 
-        if (typeof filter.name !== "string") {
-          vscode.window.showErrorMessage(
-            `Invalid value for name in filter: ${filter.name}, must be a string`
-          );
-          break;
+        // Xóa các lỗi cũ trước khi kiểm tra
+        diagnosticCollection.clear();
+
+        const selection = editor.selection;
+        const selectedText = editor.document.getText(selection).trim();
+        if (!selectedText) {
+          return;
         }
 
-        if (
-          filter.hasOwnProperty("removeCommonPath") &&
-          typeof filter.removeCommonPath !== "boolean"
-        ) {
-          vscode.window.showErrorMessage(
-            `Invalid value for removeCommonPath in filter: ${filter.name}, must be a boolean`
-          );
-          break;
+        const filePaths = selectedText
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line);
+
+        if (filePaths.length === 0) {
+          return;
         }
 
-        if (
-          filter.hasOwnProperty("outputTemplate") &&
-          (typeof filter.outputTemplate !== "string" ||
-            !filter.outputTemplate.includes("{{filePath}}") ||
-            !filter.outputTemplate.includes("{{content}}"))
-        ) {
+        const nonExistentFiles = [];
+        filePaths.forEach((filePath, index) => {
+          if (!fs.existsSync(filePath)) {
+            // Đánh dấu lỗi trên dòng tương ứng trong vùng chọn
+            const startPos = new vscode.Position(
+              selection.start.line + index,
+              0
+            );
+            const endPos = new vscode.Position(
+              selection.start.line + index,
+              filePath.length
+            );
+            const range = new vscode.Range(startPos, endPos);
+            const diagnostic = new vscode.Diagnostic(
+              range,
+              `File not found: ${filePath}`,
+              vscode.DiagnosticSeverity.Error
+            );
+            nonExistentFiles.push(diagnostic);
+          }
+        });
+
+        if (nonExistentFiles.length > 0) {
+          diagnosticCollection.set(editor.document.uri, nonExistentFiles);
+          // Hiển thị thông báo lỗi cho người dùng
           vscode.window.showErrorMessage(
-            `Invalid value for outputTemplate in filter: ${filter.name}, must be a string and contain {{filePath}} and {{content}}`
+            `Some files do not exist. Check the problems tab for more details.`
           );
-          break;
+        }
+
+        // Nếu không có file lỗi, tiến hành đọc file
+        if (nonExistentFiles.length === 0) {
+          handleReadMultipleFiles(
+            null,
+            filePaths.map((fp) => vscode.Uri.file(fp))
+          );
         }
       }
-    })
-  );
-
-  context.subscriptions.push(
+    ),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      // Xóa tất cả Diagnostic khi file được chỉnh sửa
+      diagnosticCollection.delete(event.document.uri);
+    }),
     vscode.commands.registerCommand("fileReader.openFilterSettings", () => {
       vscode.commands.executeCommand(
         "workbench.action.openSettings",

@@ -3,7 +3,7 @@
 	"publisher": "ntkhang03",
 	"displayName": "File Reader",
 	"description": "Provides context menu options to read files from folders or selected files.",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"engines": {
 		"vscode": "^1.78.0"
 	},
@@ -11,9 +11,9 @@
 		"package": "vsce package"
 	},
 	"activationEvents": [
-		"onCommand:fileReader.readFilesInFolder",
 		"onCommand:fileReader.readSelectedFiles",
-		"onCommand:fileReader.openFilterSettings"
+		"onCommand:fileReader.openFilterSettings",
+		"onCommand:fileReader.readFilesFromTextSelection"
 	],
 	"icon": "images/icon.png",
 	"categories": [
@@ -31,33 +31,38 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "fileReader.readFilesInFolder",
-				"title": "Read files in this folder",
-				"category": "File Operations"
-			},
-			{
 				"command": "fileReader.readSelectedFiles",
-				"title": "Read selected files",
+				"title": "Read selected files/folders",
 				"category": "File Operations"
 			},
 			{
 				"command": "fileReader.openFilterSettings",
 				"title": "Open Read File Filters Settings"
+			},
+			{
+				"command": "fileReader.readFilesFromTextSelection",
+				"title": "Read files from text selection",
+				"category": "File Operations"
 			}
 		],
 		"menus": {
 			"explorer/context": [
 				{
-					"command": "fileReader.readFilesInFolder",
-					"when": "explorerResourceIsFolder",
-					"group": "0-file-reader@2"
-				},
-				{
 					"command": "fileReader.readSelectedFiles",
-					"when": "!explorerResourceIsFolder || explorerResourceMultipleSelections",
+					"when": "true",
+					"group": "0-file-reader@2"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "fileReader.readFilesFromTextSelection",
+					"when": "editorHasSelection",
 					"group": "0-file-reader@2"
 				}
 			]
+		},
+		"configurationDefaults": {
+			"fileReader.selectionCount": 0
 		},
 		"configuration": {
 			"type": "object",

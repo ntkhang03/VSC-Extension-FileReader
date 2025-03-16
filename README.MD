@@ -43,10 +43,17 @@ This Visual Studio Code extension provides context menu options to read files fr
 
 ## 📋 Usage
 
+## 📋 Usage
+
 1. Open the folder containing the files you want to read in VS Code.
-2. `Right-click` on a folder or selected files in the Explorer context menu.
-3. Choose `Read files in this folder` or `Read selected files`.
-4. Optionally, select a filter to apply.
+
+- **Method 1:** `Right-click` on a `folder or file` in the Explorer context menu and click `Read selected files/folders`.
+<!-- - Chọn nhiều file/folder, sau đó nhấn chuột phải vào 1 trong các file được chọn và chọn `Read selected files/folders`. -->
+- **Method 2:** Choose multiple files/folders in the Explorer, then `Right-click` on one of the selected files/folders and select `Read selected files/folders`.
+- **Method 3:** `Select text containing file paths`, then `Right-click` and choose `Read files from text selection`.
+
+2. (Optionally) select a filter to apply.
+3. The extension will read the files and display their contents in a new editor tab.
 
 ## ⚙️ Configuration
 
@@ -98,6 +105,17 @@ File: folder1/subfolder1/file2.txt
 
 ...
 ```
+
+## 📷 Screenshots
+
+- **Read selected files/folders**
+  ![Screenshot](/screenshots/read-multiple-files-folders.png)
+
+- **Read files from text selection**
+  ![Screenshot](/screenshots/read-files-from-text-selection.png)
+
+- **Example output**
+  ![Screenshot](/screenshots/example-output.png)
 
 ## 🧑‍💻 Contributing
 
