@@ -10,7 +10,7 @@ const {
   isTextFile,
   removeCommonPath
 } = require("./utils");
-const { getFilters } = require("./settings");
+const { getFilters, getDefaultFilterName } = require("./settings");
 
 function readFilesRecursively(dirPath, filter) {
   let filePaths = [];
@@ -41,13 +41,34 @@ async function handleReadFiles(uri, uris = null) {
     }
 
     const filters = getFilters();
-    const selectedFilter = await vscode.window.showQuickPick(
-      filters.map((f) => f.name).concat("Without filter"),
-      { placeHolder: "Select a filter or press Enter to skip." }
-    );
+    let selectedFilter;
+
+    const defaultFilterName = getDefaultFilterName();
+    // If a default filter is set and exists, select it; otherwise, ask for user input.
+    if (
+      defaultFilterName &&
+      filters.find((f) => f.name === defaultFilterName)
+    ) {
+      selectedFilter = defaultFilterName;
+      vscode.window.showInformationMessage(
+        `Using default filter: ${defaultFilterName}`
+      );
+    } else {
+      if (defaultFilterName) {
+        vscode.window.showWarningMessage(
+          `You set default filter "${defaultFilterName}" but it does not exist, please check your settings.`
+        );
+      }
+      selectedFilter = await vscode.window.showQuickPick(
+        filters.map((f) => f.name).concat("Without filter"),
+        { placeHolder: "Select a filter or press Enter to skip." }
+      );
+    }
+
     if (!selectedFilter) {
       return;
     }
+
     const filter = filters.find((f) => f.name === selectedFilter) || {
       include: ["**"]
     };
@@ -134,7 +155,6 @@ async function handleReadFiles(uri, uris = null) {
           };
         })
       );
-      console.log(filePathsWithoutCommonPath);
     }
 
     const defaultOutputTemplate =

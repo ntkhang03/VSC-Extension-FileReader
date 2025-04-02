@@ -56,6 +56,8 @@ This Visual Studio Code extension provides context menu options to read files fr
 
 ## ⚙️ Configuration
 
+### Filters
+
 You can define filters to include or exclude specific files. Add the following configuration in your VS Code settings:
 
 ```json
@@ -69,6 +71,16 @@ You can define filters to include or exclude specific files. Add the following c
   }
 ]
 ```
+
+### Default Filter
+
+You can set a default filter to be applied when reading files. Add the following configuration in your VS Code settings:
+
+```json
+"fileReader.defaultFilter": "FILTER_NAME"
+```
+
+Make sure to replace `FILTER_NAME` with the name of the filter you want to use.
 
 ## 📄 Example
 

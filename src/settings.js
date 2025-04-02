@@ -1,13 +1,14 @@
 const vscode = require("vscode");
-let cachedFilters = null;
 
-function getFilters(refresh = false) {
-  if (cachedFilters && !refresh) {
-    return cachedFilters;
-  }
+function getFilters() {
   const config = vscode.workspace.getConfiguration("fileReader");
-  cachedFilters = config.get("filters") || [];
-  return cachedFilters;
+  return config.get("filters") || [];
 }
 
-module.exports = { getFilters };
+function getDefaultFilterName() {
+  const config = vscode.workspace.getConfiguration("fileReader");
+  const defaultFilterName = config.get("defaultFilter");
+  return defaultFilterName;
+}
+
+module.exports = { getFilters, getDefaultFilterName };
