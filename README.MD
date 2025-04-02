@@ -5,7 +5,8 @@ This Visual Studio Code extension provides context menu options to read files fr
 ## 🚀 Features
 
 - Read files in a selected folder.
-- Read selected files.
+- Read selected files/folders in the Explorer view.
+- Read files from a text selection in the editor.
 - Apply filters to include or exclude specific files.
 - View the directory structure in a tree format.
 
@@ -40,8 +41,6 @@ This Visual Studio Code extension provides context menu options to read files fr
    - Open the Extensions view by pressing `Ctrl+Shift+X`.
    - Click on the `...` icon and choose `Install from VSIX...`.
    - Select the generated `.vsix` file in the `out` directory.
-
-## 📋 Usage
 
 ## 📋 Usage
 
