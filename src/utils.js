@@ -2,6 +2,9 @@ const fs = require("fs");
 const micromatch = require("micromatch");
 const mime = require("mime-types");
 
+// when mime.lookup(filePath) return false, will use this to check if file is text file
+const extTextFiles = ["vue"];
+
 /**
  * Filter the list of file paths based on glob patterns or specific file names (include, exclude).
  *
@@ -148,10 +151,14 @@ function createFileTree(paths) {
   return root;
 }
 
-function isTextFile(filePath) {
+function isTextFile(filePath = "") {
   try {
-    const type = mime.lookup(filePath);
-    return type.startsWith("text/") || type.startsWith("application");
+    const type = mime.lookup(filePath) || "";
+    return (
+      type.startsWith("text/") ||
+      type.startsWith("application") ||
+      extTextFiles.includes(filePath.split(".").pop())
+    );
   } catch (err) {
     return false;
   }
