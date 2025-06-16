@@ -23,11 +23,11 @@ This Visual Studio Code extension provides context menu options to read files fr
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/ntkhang03/file-reader-extension.git
+   git clone https://github.com/ntkhang03/VSC-Extension-FileReader
    ```
 2. Navigate to the project directory:
    ```sh
-   cd file-reader-extension
+   cd VSC-Extension-FileReader
    ```
 3. Install dependencies:
    ```sh
@@ -47,7 +47,6 @@ This Visual Studio Code extension provides context menu options to read files fr
 1. Open the folder containing the files you want to read in VS Code.
 
 - **Method 1:** `Right-click` on a `folder or file` in the Explorer context menu and click `Read selected files/folders`.
-<!-- - Chọn nhiều file/folder, sau đó nhấn chuột phải vào 1 trong các file được chọn và chọn `Read selected files/folders`. -->
 - **Method 2:** Choose multiple files/folders in the Explorer, then `Right-click` on one of the selected files/folders and select `Read selected files/folders`.
 - **Method 3:** `Select text containing file paths`, then `Right-click` and choose `Read files from text selection`.
 

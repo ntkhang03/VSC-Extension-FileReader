@@ -3,7 +3,7 @@
 	"publisher": "ntkhang03",
 	"displayName": "File Reader",
 	"description": "Provides context menu options to read files from folders or selected files.",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"engines": {
 		"vscode": "^1.78.0"
 	},
