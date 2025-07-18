@@ -1,21 +1,6 @@
 const fs = require("fs");
 const micromatch = require("micromatch");
-const mime = require("mime-types");
-
-// when mime.lookup(filePath) return false, will use this to check if file is text file
-const extTextFiles = [
-  "vue",
-  "js",
-  "ts",
-  "jsx",
-  "tsx",
-  "json",
-  "html",
-  "css",
-  "scss",
-  "md",
-  "txt"
-];
+const { isText } = require("istextorbinary");
 
 /**
  * Filter the list of file paths based on glob patterns or specific file names (include, exclude).
@@ -165,12 +150,8 @@ function createFileTree(paths) {
 
 function isTextFile(filePath = "") {
   try {
-    const type = mime.lookup(filePath) || "";
-    return (
-      type.startsWith("text/") ||
-      type.startsWith("application") ||
-      extTextFiles.includes(filePath.split(".").pop())
-    );
+    const buffer = fs.readFileSync(filePath);
+    return isText(null, buffer);
   } catch (err) {
     return false;
   }
